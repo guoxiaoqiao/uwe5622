@@ -82,7 +82,11 @@ static int wcn_usb_dopen(struct inode *inode, struct file *file)
 {
 	struct wcn_usb_ddata *data;
 
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5,19, 2))
+	data = (struct wcn_usb_ddata *)pde_data(inode);
+#else
 	data = (struct wcn_usb_ddata *)PDE_DATA(inode);
+#endif
 
 	if (!data)
 		return -EIO;
@@ -339,8 +343,4 @@ int wcn_usb_dinit(void)
 			&wcn_usb_dops, this);
 	if (!this->download)
 		wcn_usb_dp("%s create file[download] failed\n", __func__);
-
-	ddthis = this;
-	return 0;
-}
 

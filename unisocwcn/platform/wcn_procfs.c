@@ -439,7 +439,11 @@ static const struct file_operations mdbg_snap_shoot_seq_fops = {
 static int mdbg_proc_open(struct inode *inode, struct file *filp)
 {
 	struct mdbg_proc_entry *entry =
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5,19, 2))
 		(struct mdbg_proc_entry *)pde_data(inode);
+#else
+		(struct mdbg_proc_entry *)PDE_DATA(inode);
+#endif
 	filp->private_data = entry;
 
 	return 0;

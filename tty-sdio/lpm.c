@@ -11,6 +11,7 @@
 #include <linux/seq_file.h>
 #include <linux/version.h>
 #include <linux/export.h>
+#include <linux/device.h>
 #include <marlin_platform.h>
 
 #define VERSION         "marlin2 V0.1"
@@ -70,7 +71,11 @@ static int btwrite_proc_show(struct seq_file *m, void *v)
 
 static int bluesleep_open_proc_btwrite(struct inode *inode, struct file *file)
 {
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5,19, 2))
 	return single_open(file, btwrite_proc_show, pde_data(inode));
+#else
+	return single_open(file, btwrite_proc_show, PDE_DATA(inode));
+#endif
 }
 
 static const struct proc_ops lpm_proc_btwrite_fops = {

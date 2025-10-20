@@ -702,8 +702,8 @@ static int sprdwl_add_cipher_key(struct sprdwl_vif *vif, bool pairwise,
 	return ret;
 }
 
-static int sprdwl_cfg80211_add_key(struct wiphy *wiphy, struct net_device *ndev, int link_id,
-				   u8 key_index, bool pairwise,
+static int sprdwl_cfg80211_add_key(struct wiphy *wiphy, struct net_device *ndev,
+				   int link_id, u8 key_index, bool pairwise,
 				   const u8 *mac_addr,
 				   struct key_params *params)
 {
@@ -724,8 +724,8 @@ static int sprdwl_cfg80211_add_key(struct wiphy *wiphy, struct net_device *ndev,
 						 mac_addr);
 }
 
-static int sprdwl_cfg80211_del_key(struct wiphy *wiphy, struct net_device *ndev, int link_id,
-				   u8 key_index, bool pairwise,
+static int sprdwl_cfg80211_del_key(struct wiphy *wiphy, struct net_device *ndev,
+				   int link_id, u8 key_index, bool pairwise,
 				   const u8 *mac_addr)
 {
 	struct sprdwl_vif *vif = netdev_priv(ndev);
@@ -754,8 +754,8 @@ static int sprdwl_cfg80211_del_key(struct wiphy *wiphy, struct net_device *ndev,
 }
 
 static int sprdwl_cfg80211_set_default_key(struct wiphy *wiphy,
-					   struct net_device *ndev, int link_id,
-					   u8 key_index, bool unicast,
+					   struct net_device *ndev,
+					   int link_id, u8 key_index, bool unicast,
 					   bool multicast)
 {
 	struct sprdwl_vif *vif = netdev_priv(ndev);
@@ -964,9 +964,16 @@ err_start:
 
 static int sprdwl_cfg80211_change_beacon(struct wiphy *wiphy,
 					 struct net_device *ndev,
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 7, 0))
+					 struct cfg80211_ap_update *info)
+#else
 					 struct cfg80211_beacon_data *beacon)
+#endif
 {
 	struct sprdwl_vif *vif = netdev_priv(ndev);
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 7, 0))
+	struct cfg80211_beacon_data *beacon = &(info->beacon);
+#endif
 
 	wl_ndev_log(L_DBG, ndev, "%s\n", __func__);
 #ifdef DFS_MASTER
@@ -984,7 +991,11 @@ static int sprdwl_cfg80211_change_beacon(struct wiphy *wiphy,
 	return sprdwl_change_beacon(vif, beacon);
 }
 
-static int sprdwl_cfg80211_stop_ap(struct wiphy *wiphy, struct net_device *ndev,unsigned int link_id)
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5,19, 2))
+static int sprdwl_cfg80211_stop_ap(struct wiphy *wiphy, struct net_device *ndev, unsigned int link_id)
+#else
+static int sprdwl_cfg80211_stop_ap(struct wiphy *wiphy, struct net_device *ndev)
+#endif
 {
 #ifdef DFS_MASTER
 	struct sprdwl_vif *vif = netdev_priv(ndev);
@@ -2402,7 +2413,6 @@ void sprdwl_report_connection(struct sprdwl_vif *vif,
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 14, 0)
 		struct cfg80211_roam_info roam_info = {
 			.links[0].bss = bss,
-			.links[0].channel = channel,
 			.req_ie = conn_info->req_ie,
 			.req_ie_len = conn_info->req_ie_len,
 			.resp_ie = conn_info->resp_ie,
@@ -2862,10 +2872,13 @@ static void sprdwl_cfg80211_stop_p2p_device(struct wiphy *wiphy,
 }
 
 static int sprdwl_cfg80211_tdls_mgmt(struct wiphy *wiphy,
-					 struct net_device *ndev, const u8 *peer,
-					 u8 action_code, u8 dialog_token,
-					 u16 status_code,  u32 peer_capability,
-					 bool initiator, const u8 *buf, size_t len)
+				     struct net_device *ndev, const u8 *peer,
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 5, 0))
+				     int link_id,
+#endif
+				     u8 action_code, u8 dialog_token,
+				     u16 status_code,  u32 peer_capability,
+				     bool initiator, const u8 *buf, size_t len)
 {
 	struct sprdwl_vif *vif = netdev_priv(ndev);
 	struct sk_buff *tdls_skb;

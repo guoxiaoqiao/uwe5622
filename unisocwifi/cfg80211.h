@@ -113,7 +113,7 @@ enum acl_mode {
 
 struct sprdwl_scan_ssid {
 	u8 len;
-	u8 ssid[0];
+	u8 ssid[];
 } __packed;
 
 struct sprdwl_sched_scan_buf {

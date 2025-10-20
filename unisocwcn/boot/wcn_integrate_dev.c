@@ -562,7 +562,11 @@ static struct wcn_proc_data g_proc_data = {
 static int wcn_platform_open(struct inode *inode, struct file *filp)
 {
 	struct platform_proc_file_entry
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5,19, 2))
+	*entry = (struct platform_proc_file_entry *)pde_data(inode);
+#else
 	*entry = (struct platform_proc_file_entry *)PDE_DATA(inode);
+#endif
 
 	WCN_INFO("entry name:%s\n!", entry->name);
 

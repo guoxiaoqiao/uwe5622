@@ -142,8 +142,13 @@ static int prefixcmp(const char *str, const char *prefix)
 			return (unsigned char)*prefix - (unsigned char)*str;
 }
 
+#if KERNEL_VERSION(3, 19, 0) <= LINUX_VERSION_CODE
 static bool find_callback(struct dir_context *ctx, const char *name, int namlen,
 		     loff_t offset, u64 ino, unsigned int d_type)
+#else
+static int find_callback(void *ctx, const char *name, int namlen,
+		     loff_t offset, u64 ino, unsigned int d_type)
+#endif
 {
 	int tmp;
 
@@ -178,7 +183,7 @@ int parse_firmware_path(char *firmware_path)
 			continue;
 		}
 		memset(fstab_name, 0, sizeof(fstab_name));
-		strncpy(fstab_name, fstab_dir[loop], sizeof(fstab_dir[loop]));
+		strncpy(fstab_name, fstab_dir[loop], sizeof(fstab_name));
 		if (strlen(fstab_name) > 1)
 			fstab_name[strlen(fstab_name)] = '/';
 		iterate_dir(file1, &ctx);

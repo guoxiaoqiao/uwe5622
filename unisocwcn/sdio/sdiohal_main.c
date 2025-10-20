@@ -23,6 +23,7 @@
 #include <linux/module.h>
 #include <linux/of_device.h>
 #include <linux/of_gpio.h>
+#include <linux/of_platform.h>
 #include <linux/pm_runtime.h>
 #include <linux/mmc/card.h>
 #include <linux/mmc/core.h>
@@ -48,9 +49,9 @@ extern void sdio_clk_always_on(int on);
 extern void sdio_set_max_reqsz(unsigned int size);
 #endif
 
-#ifdef CONFIG_RK_BOARD
-extern int rockchip_wifi_set_carddetect(int val);
-#endif
+//#ifdef CONFIG_RK_BOARD
+//extern int rockchip_wifi_set_carddetect(int val);
+//#endif
 
 #ifdef CONFIG_AW_BOARD
 extern int sunxi_wlan_get_bus_index(void);
@@ -2090,9 +2091,9 @@ void sdiohal_remove_card(void)
 	sdiohal_set_card_present(0);
 #endif
 
-#ifdef CONFIG_RK_BOARD
-	rockchip_wifi_set_carddetect(0);
-#endif
+//#ifdef CONFIG_RK_BOARD
+//	rockchip_wifi_set_carddetect(0);
+//#endif
 
 #ifdef CONFIG_AW_BOARD
 //	sunxi_mmc_rescan_card(wlan_bus_index);
@@ -2192,9 +2193,9 @@ int sdiohal_scan_card(void)
 	sdiohal_set_card_present(1);
 #endif
 
-#ifdef CONFIG_RK_BOARD
-	rockchip_wifi_set_carddetect(1);
-#endif
+//#ifdef CONFIG_RK_BOARD
+//	rockchip_wifi_set_carddetect(1);
+//#endif
 
 #if 0
 	wlan_bus_index = sunxi_wlan_get_bus_index();
