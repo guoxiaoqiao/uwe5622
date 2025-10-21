@@ -1,0 +1,42 @@
+#!/bin/sh /etc/rc.common
+
+START=95
+USE_PROCD=1
+
+PROG_HCIA="/usr/bin/hciattach"
+PROG_BTA="/usr/bin/btattach"
+TTY_DEVICE="${TTY_DEVICE:-/dev/ttyBT0}"
+BAUD="${BAUD:-1500000}"
+# 优先尝试 hciattach 的 sprd 协议；若不支持则退回 any；再退回 btattach h4
+
+choose_cmd() {
+    local has_sprd
+    if [ -x "$PROG_HCIA" ]; then
+        has_sprd=$($PROG_HCIA -l 2>/dev/null | awk '{print $1}' | grep -x sprd || true)
+        if [ -n "$has_sprd" ]; then
+            echo "$PROG_HCIA -n -s $BAUD $TTY_DEVICE sprd"
+            return 0
+        fi
+        # 退回 any（通用 H4）
+        echo "$PROG_HCIA -n -s $BAUD $TTY_DEVICE any"
+        return 0
+    fi
+    if [ -x "$PROG_BTA" ]; then
+        echo "$PROG_BTA -B $TTY_DEVICE -S $BAUD -P h4"
+        return 0
+    fi
+    return 1
+}
+
+start_service() {
+    local cmd
+    cmd=$(choose_cmd) || return 0
+    procd_open_instance
+    procd_set_param respawn 5 30 0
+    procd_set_param command /bin/sh -c "modprobe sprdbt_tty 2>/dev/null; exec $cmd"
+    procd_close_instance
+}
+
+stop_service() {
+	killall hciattach >/dev/null 2>&1
+}
