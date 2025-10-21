@@ -372,7 +372,7 @@ struct sprdwl_cmd_add_key {
 	u8 keyseq[16];
 	u8 cypher_type;
 	u8 key_len;
-	u8 value[0];
+	DECLARE_FLEX_ARRAY(u8, value);
 } __packed;
 
 struct sprdwl_cmd_del_key {
@@ -402,13 +402,13 @@ struct sprdwl_cmd_set_ie {
 #define	SPRDWL_IE_BEACON_TAIL		6
 	u8 type;
 	__le16 len;
-	u8 data[0];
+	DECLARE_FLEX_ARRAY(u8, data);
 } __packed;
 
 /* WIFI_CMD_START_AP */
 struct sprdwl_cmd_start_ap {
 	__le16 len;
-	u8 value[0];
+	DECLARE_FLEX_ARRAY(u8, value);
 } __packed;
 
 /* WIFI_CMD_DEL_STATION */
@@ -454,7 +454,7 @@ struct sprdwl_cmd_scan {
 	__le32 channels;	/* One bit for one channel */
 	__le32 reserved;
 	u16 ssid_len;
-	u8 ssid[0];
+	DECLARE_FLEX_ARRAY(u8, ssid);
 } __packed;
 
 /* WIFI_CMD_SCHED_SCAN */
@@ -549,7 +549,7 @@ struct sprdwl_cmd_mgmt_tx {
 	__le32 wait;		/* wait time */
 	__le64 cookie;		/* cookie */
 	__le16 len;		/* mac length */
-	u8 value[0];		/* mac */
+	DECLARE_FLEX_ARRAY(u8, value);		/* mac */
 } __packed;
 
 /* WIFI_CMD_REGISTER_FRAME */
@@ -574,7 +574,7 @@ struct sprdwl_cmd_cqm_rssi {
 struct sprdwl_cmd_roam_offload_data {
 	u8 type;
 	u8 len;
-	u8 value[0];
+	DECLARE_FLEX_ARRAY(u8, value);
 } __packed;
 
 struct sprdwl_cmd_tdls_mgmt {
@@ -604,7 +604,7 @@ struct sprdwl_cmd_tdls_mgmt {
 		} __packed discover_resp;
 	} u;
 	__le32 len;
-	u8 frame[0];
+	DECLARE_FLEX_ARRAY(u8, frame);
 } __packed;
 
 struct sprdwl_cmd_tdls {
@@ -613,13 +613,13 @@ struct sprdwl_cmd_tdls {
 	u8 initiator;
 	u8 rsvd;
 	u8 paylen;
-	u8 payload[0];
+	DECLARE_FLEX_ARRAY(u8, payload);
 } __packed;
 
 struct sprdwl_cmd_blacklist {
 	u8 sub_type;
 	u8 num;
-	u8 mac[0];
+	DECLARE_FLEX_ARRAY(u8, mac);
 } __packed;
 
 struct sprdwl_cmd_tdls_channel_switch {
@@ -631,7 +631,7 @@ struct sprdwl_cmd_tdls_channel_switch {
 struct sprdwl_cmd_set_mac_addr {
 	u8 sub_type;
 	u8 num;
-	u8 mac[0];
+	DECLARE_FLEX_ARRAY(u8, mac);
 } __packed;
 
 struct sprdwl_cmd_rsp_state_code {
@@ -644,7 +644,7 @@ struct sprdwl_cmd_11v {
 	u16 len;
 	union {
 		u32 value;
-		u8 buf[0];
+		DECLARE_FLEX_ARRAY(u8, buf);
 	};
 } __packed;
 
@@ -714,7 +714,7 @@ struct sprdwl_event_mgmt_frame {
 	u8 reserved;
 	u8 bssid[ETH_ALEN];	/* roaming frame */
 	__le16 len;
-	u8 data[0];
+	DECLARE_FLEX_ARRAY(u8, data);
 } __packed;
 
 /* WIFI_EVENT_SCAN_COMP */
@@ -737,7 +737,7 @@ struct sprdwl_event_mgmt_tx_status {
 	__le64 cookie;		/* cookie */
 	u8 ack;			/* status */
 	__le16 len;		/* frame len */
-	u8 buf[0];		/* mgmt frame */
+	DECLARE_FLEX_ARRAY(u8, buf);		/* mgmt frame */
 } __packed;
 
 /* WIFI_EVENT_NEW_STATION  */
@@ -745,7 +745,7 @@ struct sprdwl_event_new_station {
 	u8 is_connect;
 	u8 mac[ETH_ALEN];
 	__le16 ie_len;
-	u8 ie[0];
+	DECLARE_FLEX_ARRAY(u8, ie);
 } __packed;
 
 /* WIFI_EVENT_MIC_FAIL */
@@ -772,7 +772,7 @@ struct sprdwl_event_tdls {
 struct sprd_cmd_gscan_header {
 	u16 subcmd;
 	u16 data_len;
-	u8 data[0];
+	DECLARE_FLEX_ARRAY(u8, data);
 } __packed;
 
 struct sprdwl_llc_hdr {
@@ -898,7 +898,7 @@ struct sprdwl_priv;
 struct sprdwl_tlv_data {
 	u16 type;
 	u16 len;
-	u8 data[0];
+	DECLARE_FLEX_ARRAY(u8, data);
 } __packed;
 
 /* TLV rbuf size */
@@ -938,7 +938,7 @@ struct sprdwl_cmd_packet_offload {
 	u8 enable;
 	u32 period;
 	u16 len;
-	u8 data[0];
+	DECLARE_FLEX_ARRAY(u8, data);
 } __packed;
 
 int sprdwl_cmd_rsp(struct sprdwl_priv *priv, u8 *msg);

@@ -75,7 +75,7 @@ struct sprdwl_mc_filter {
 	bool mc_change;
 	u8 subtype;
 	u8 mac_num;
-	u8 mac_addr[0];
+	DECLARE_FLEX_ARRAY(u8, mac_addr);
 };
 
 struct android_wifi_priv_cmd {

@@ -1383,7 +1383,7 @@ int sprdwl_scan(struct sprdwl_priv *priv, u8 vif_ctx_id,
 
 	struct sprdwl_5g_chn {
 		u16 n_5g_chn;
-		u16 chns[0];
+		DECLARE_FLEX_ARRAY(u16, chns);
 	} *ext_5g;
 
 	chns_len_5g = chn_count_5g * sizeof(*chns_5g);
@@ -3426,7 +3426,9 @@ void sprdwl_event_chan_changed(struct sprdwl_vif *vif, u8 *data, u16 len)
 						NL80211_CHAN_HT20);
 		else
 			wl_err("%s, ch is null!\n", __func__);
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5,19, 2))
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,9, 0))
+		cfg80211_ch_switch_notify(vif->ndev, &chandef, 0);
+#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(5,19, 2))
 		cfg80211_ch_switch_notify(vif->ndev, &chandef, 0, 0);
 #else
 		cfg80211_ch_switch_notify(vif->ndev, &chandef);
@@ -3686,7 +3688,7 @@ int sprdwl_set_wowlan(struct sprdwl_priv *priv, int subcmd, void *pad, int pad_l
 	struct wowlan_cmd {
 		u8 sub_cmd_id;
 		u8 pad_len;
-		char pad[0];
+		DECLARE_FLEX_ARRAY(u8, pad);
 	} *cmd;
 
 	if (priv == NULL)

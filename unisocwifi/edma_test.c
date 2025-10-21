@@ -35,7 +35,7 @@ static unsigned int chn_tx_fail[8];
 struct edma_test_cmd_header {
 	u16 subcmd;
 	u16 len;
-	u8 data[0];
+	DECLARE_FLEX_ARRAY(u8, data);
 } __packed;
 
 struct task_struct *task_array[PCIE_CHANNEL_PAIR];

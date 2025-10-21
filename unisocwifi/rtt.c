@@ -151,7 +151,7 @@ struct ftm_session_start {
 struct sprdwl_cmd_rtt {
 	u8 sub_cmd;
 	__le16 len;
-	u8 data[0];
+	DECLARE_FLEX_ARRAY(u8, data);
 } __packed;
 
 static const struct
