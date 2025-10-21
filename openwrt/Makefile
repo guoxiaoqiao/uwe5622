@@ -22,7 +22,7 @@ define KernelPackage/uwe5622
 	$(PKG_BUILD_DIR)/unisocwifi/sprdwl_ng.ko \
 	$(PKG_BUILD_DIR)/unisocwcn/uwe5622_bsp_sdio.ko \
 	$(PKG_BUILD_DIR)/tty-sdio/sprdbt_tty.ko
-  AUTOLOAD:=$(call AutoProbe,uwe5622_bsp_sdio sprdbt_tty)
+  AUTOLOAD:=$(call AutoProbe,uwe5622_bsp_sdio sprdbt_tty sprdwl_ng)
   PROVIDES:=kmod-uwe5622
 endef
 
