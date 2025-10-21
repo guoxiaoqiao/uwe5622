@@ -22,3 +22,16 @@ Out-of-tree driver stack for the Unisoc UWE5622 wireless combo module (marketed 
 3. Install the resulting modules and ensure firmware is available under `/lib/firmware/uwe5622/`.
 
 See the Chinese version for a translated guide and additional deployment notes.
+
+## OpenWrt Packaging
+
+- The `openwrt/` directory mirrors the packaging used in an OpenWrt 24.10 downstream tree (commit 78798e8973) and is **not** intended for earlier releases or master snapshots.
+- `openwrt/Makefile` is tailored to OpenWrt 24.10; its sed-based adjustments depend on that release's backports layout and will fail on other branches.
+- To build inside an OpenWrt buildroot, copy the directory to `package/kernel/uwe5622/` and run `make package/kernel/uwe5622/{clean,compile} V=s`.
+
+## Runtime Notes (OpenWrt 24.10)
+
+- Test environment: OpenWrt 24.10 image (kernel 6.6.110) on Orange Pi Zero 3.
+- `sprdwl_ng` triggers two `ieee80211_set_bitrate_flags` warnings during wiphy registration, hinting at incomplete 2.4/5 GHz capability metadata.
+- Bluetooth HCI reset (`opcode 0x080f`) returns `-22`, so the bundled init script still needs protocol fallbacks for this hardware.
+- Running `iwinfo` from the system shell hangs without output, indicating the Wi-Fi stack remains unstable on this build.
